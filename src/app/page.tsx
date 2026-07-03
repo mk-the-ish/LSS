@@ -49,10 +49,10 @@ function TopNav() {
 
   return (
     <nav className="fixed inset-x-0 top-0 z-50 border-b border-gray-200 bg-white/80 backdrop-blur-sm">
-      <div className="mx-auto w-[min(1200px,calc(100vw-2rem))] flex items-center justify-between px-4 py-3">
-        <div className="flex items-center gap-3">
-          <Image src="/assets/logo.jpg" alt="Lowveld Show logo" width={40} height={24} className="h-8 w-auto" />
-          <div className="text-sm font-semibold text-gray-900">Lowveld Show Society</div>
+      <div className="mx-auto w-[min(1600px,calc(100vw-2rem))] flex items-center justify-between px-6 py-4">
+        <div className="flex items-center gap-4">
+          <Image src="/assets/favicon.png" alt="Lowveld Show logo" width={48} height={28} className="h-10 w-auto" />
+          <div className="text-base font-semibold text-gray-900">Lowveld Show Society</div>
         </div>
 
         <div className="hidden md:flex gap-6">
@@ -257,9 +257,9 @@ export default function Page() {
 
 function Stat({ value, label }: { value: string; label: string }) {
   return (
-    <div className="rounded-[1.25rem] border border-gray-300 bg-gray-100 p-4">
+    <div className="rounded-[1.25rem] border border-white/30 bg-white/10 p-4 backdrop-blur-md">
       <strong className="block text-2xl font-bold text-lss-gold">{value}</strong>
-      <span className="text-sm text-gray-600">{label}</span>
+      <span className="text-sm text-white/90">{label}</span>
     </div>
   );
 }
