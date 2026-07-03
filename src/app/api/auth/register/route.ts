@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
+import { sendRegistrationNotification } from "@/lib/email-service";
 
 export async function POST(request: NextRequest) {
   try {
@@ -67,6 +68,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: false, error: `Failed to create profile: ${upsertError.message}` }, { status: 400 });
     }
 
+    // Send registration notification emails
+    const emailResult = await sendRegistrationNotification({
+      full_name: fullName,
+      email: email,
+      company_name: companyName,
+      category: category,
+      phone: phone,
+      calculated_total_usd: totalUsd,
+      payment_reference: paymentReference,
+    });
+
+    if (!emailResult.ok) {
+      console.error("Email notification failed:", emailResult.error);
+      // Don't fail the registration if email fails - user still gets registered
+    }
+
     return NextResponse.json({ ok: true, userId: user.id });
   } catch (error) {
     console.error("Register API error:", error);
@@ -76,3 +93,4 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+

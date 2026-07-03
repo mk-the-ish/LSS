@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
+import { sendVerificationApprovedNotification, sendVerificationRejectedNotification } from "@/lib/email-service";
 
 type Body = {
   profileId?: string;
@@ -40,6 +41,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
     }
 
+    // Fetch profile data before updating
+    const { data: profile } = await supabase.from("profiles").select("*").eq("id", targetId).maybeSingle();
+    if (!profile) {
+      return NextResponse.json({ error: "Profile not found" }, { status: 404 });
+    }
+
     const update =
       body.action === "approve"
         ? {
@@ -59,6 +66,30 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
+    // Send notification emails based on action
+    if (body.action === "approve") {
+      const emailResult = await sendVerificationApprovedNotification({
+        full_name: profile.full_name as string,
+        email: profile.email as string,
+        company_name: profile.company_name as string,
+        payment_reference: profile.payment_reference as string,
+      });
+      if (!emailResult.ok) {
+        console.error("Approval email failed:", emailResult.error);
+      }
+    } else {
+      const emailResult = await sendVerificationRejectedNotification({
+        full_name: profile.full_name as string,
+        email: profile.email as string,
+        company_name: profile.company_name as string,
+        payment_reference: profile.payment_reference as string,
+        rejection_reason: body.rejectionReason,
+      });
+      if (!emailResult.ok) {
+        console.error("Rejection email failed:", emailResult.error);
+      }
+    }
+
     return NextResponse.json({ ok: true });
   } catch (error) {
     return NextResponse.json(
@@ -67,3 +98,4 @@ export async function POST(request: Request) {
     );
   }
 }
+

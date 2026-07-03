@@ -340,6 +340,18 @@ export function PortalProvider({ children }: { children: ReactNode }) {
           registration: { ...current.registration, ...next },
         }));
         await syncProfile(next);
+
+        // Send payment upload notification email
+        try {
+          const notifyRes = await fetch("/api/payment/notify", { method: "POST" });
+          if (!notifyRes.ok) {
+            console.error("Failed to send payment notification email");
+          }
+        } catch (emailError) {
+          console.error("Payment notification error:", emailError);
+          // Don't fail the upload if email fails
+        }
+
         return { ok: true };
       } catch (error) {
         return { ok: false, error: error instanceof Error ? error.message : "Failed to upload POP." };
