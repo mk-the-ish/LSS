@@ -244,7 +244,7 @@ export default function PaymentClient({ profile, userEmail }: { profile: Record<
             <div className="space-y-5">
               <div>
                 <h2 className="text-xl font-semibold text-white mb-1">Upload Proof of Payment</h2>
-                <p className="text-sm text-white/70">Exhibitor: <strong className="text-white">{profile.company_name}</strong></p>
+                <p className="text-sm text-white/70">Exhibitor: <strong className="text-white">{profile.company_name as string}</strong></p>
               </div>
 
               {/* Drag & Drop Zone */}

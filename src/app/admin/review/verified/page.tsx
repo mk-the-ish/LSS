@@ -56,7 +56,7 @@ export default async function AdminVerifiedPage() {
                     <td className="px-4 py-3 font-medium">{profile.company_name as string}</td>
                     <td className="px-4 py-3 text-white/70">{profile.full_name as string}</td>
                     <td className="px-4 py-3 capitalize text-white/70">{String(profile.category).replace("_", " ")}</td>
-                    <td className="px-4 py-3 text-lss-gold font-semibold">${profile.calculated_total_usd}</td>
+                    <td className="px-4 py-3 text-lss-gold font-semibold">${Number(profile.calculated_total_usd)}</td>
                     <td className="px-4 py-3">
                       <span className="inline-block rounded-full bg-lss-green/20 px-3 py-1 text-xs font-semibold text-lss-green">Verified</span>
                     </td>
