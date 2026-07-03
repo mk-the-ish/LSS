@@ -154,15 +154,67 @@ export default function RegisterClient() {
     }
 
     try {
-      const result = await signUp(formState.email, formState.password, formState.fullName);
-      if (!result.ok) {
-        setError(result.error);
+      // Step 1: Sign up the user
+      const signUpResult = await signUp(formState.email, formState.password, formState.fullName);
+      if (!signUpResult.ok) {
+        setError(signUpResult.error);
         setIsLoading(false);
         return;
       }
 
-      // Update registration state with form data and sync to database
-      await updateRegistration({
+      // Step 2: Calculate pricing for total
+      const basePrices: Record<typeof formState.category, number> = {
+        corporate: 1000,
+        parastatal: 1000,
+        government: 850,
+        farmers_association: 850,
+        school: 750,
+        sme: 750,
+      };
+      const base = basePrices[formState.category] || 750;
+      const vehicle = formState.addVehiclePasses * PRICING_RULES.vehiclePass;
+      const multi = formState.addMultiTickets * PRICING_RULES.multiTicket;
+      const single = formState.addSingleTickets * PRICING_RULES.singleTicket;
+      const dinner = formState.dinnerTickets * PRICING_RULES.dinnerTicket;
+      const adv = formState.wantsAdvertising ? PRICING_RULES.advertisingSlot : 0;
+      const sponsorSum = formState.selectedSponsorships.reduce((sum, key) => {
+        return sum + (SPONSORSHIP_PRICES[key] || 0);
+      }, 0);
+      const subtotal = base + vehicle + multi + single + dinner + adv + sponsorSum;
+      const isEarlyBird = new Date() < new Date("2026-06-30T23:59:59");
+      const discount = isEarlyBird ? Math.round(subtotal * 0.1 * 100) / 100 : 0;
+      const totalUsd = subtotal - discount;
+
+      // Step 3: Create profile via server API (ensures proper auth context)
+      const profileRes = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fullName: formState.fullName,
+          email: formState.email,
+          companyName: formState.companyName,
+          category: formState.category,
+          phone: formState.phone,
+          vehiclePasses: formState.addVehiclePasses,
+          multiTickets: formState.addMultiTickets,
+          singleTickets: formState.addSingleTickets,
+          dinnerTickets: formState.dinnerTickets,
+          wantsAdvertising: formState.wantsAdvertising,
+          sponsorships: formState.selectedSponsorships,
+          totalUsd: totalUsd,
+          isEarlyBird: isEarlyBird,
+        }),
+      });
+
+      if (!profileRes.ok) {
+        const errorData = await profileRes.json();
+        setError(errorData.error || "Failed to create profile");
+        setIsLoading(false);
+        return;
+      }
+
+      // Step 4: Update local state and redirect
+      updateRegistration({
         fullName: formState.fullName,
         email: formState.email,
         password: formState.password,
