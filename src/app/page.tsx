@@ -144,7 +144,7 @@ export default function Page() {
 
       <div className="mt-12 flex items-center justify-center gap-2">
         <p className="text-xs text-white/30">Developed and designed by</p>
-        <Image src="/assets/nueetech.png" alt="Nueetech logo" width={60} height={20} className="h-5 w-auto opacity-40" />
+        <Image src="/assets/nueetech.jpg" alt="Nueetech logo" width={60} height={20} className="h-5 w-auto opacity-40" />
         <p className="text-xs text-white/30">2026</p>
       </div>
     </main>
