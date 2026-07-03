@@ -246,8 +246,10 @@ export default function Page() {
 
       <div className="mt-12 flex items-center justify-center gap-2 border-t border-gray-300 pt-8">
         <p className="text-xs text-gray-500">Developed and designed by</p>
-        <Image src="/assets/nueetech.jpg" alt="Nueetech logo" width={60} height={20} className="h-5 w-auto opacity-60" />
-        <p className="text-xs text-gray-500">2026</p>
+        <Link href="https://nueetech.vercel.app" target="_blank" rel="noopener noreferrer">
+          <Image src="/assets/nueetech.jpg" alt="Nueetech logo" width={60} height={20} className="h-5 w-auto opacity-60" />
+        </Link>
+        <p className="text-xs text-gray-500">All rights reserved 2026 © </p>
       </div>
         </div>
       </div>
