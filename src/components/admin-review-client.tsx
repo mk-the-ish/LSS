@@ -14,11 +14,15 @@ export default function ReviewClient({ profile, adminEmail }: { profile: Profile
 
   const name = String(profile.full_name ?? "");
   const company = String(profile.company_name ?? "");
+  const email = String(profile.email ?? "No email");
+  const phone = String(profile.phone ?? profile.phone_number ?? "Not provided");
+  const category = String(profile.category ?? "Not provided");
   const total = Number(profile.calculated_total_usd ?? 0);
   const verificationStatus = String(profile.verification_status ?? "pending_verification");
   const profileId = String(profile.id ?? "");
   const popName = String(profile.pop_file_name ?? "Not uploaded");
   const paymentReference = String(profile.payment_reference ?? "Not generated");
+  const notes = String(profile.notes ?? profile.additional_notes ?? "No extra notes");
 
   const popPreview = useMemo(() => String(profile.pop_url ?? ""), [profile.pop_url]);
 
@@ -40,8 +44,7 @@ export default function ReviewClient({ profile, adminEmail }: { profile: Profile
       return;
     }
 
-    setStatus(action === "approve" ? "Profile approved." : "Profile rejected.");
-    router.refresh();
+    router.replace("/admin");
   }
 
   return (
@@ -53,10 +56,14 @@ export default function ReviewClient({ profile, adminEmail }: { profile: Profile
             <p className="text-sm text-white/60">Admin: {adminEmail || "unknown"}</p>
             <h2 className="mt-2 text-2xl font-semibold text-white">{company || "Unnamed company"}</h2>
             <p className="mt-2 text-white/70">Applicant: <strong className="text-white">{name || "Unknown"}</strong></p>
+            <p className="mt-2 text-white/70">Email: <strong className="text-white">{email}</strong></p>
+            <p className="mt-2 text-white/70">Phone: <strong className="text-white">{phone}</strong></p>
+            <p className="mt-2 text-white/70">Category: <strong className="text-white">{category}</strong></p>
             <p className="mt-2 text-white/70">Status: <strong className="text-white">{verificationStatus}</strong></p>
             <p className="mt-2 text-white/70">Total due: <strong className="text-white">{fmt(total)}</strong></p>
             <p className="mt-2 text-white/70">Reference: <strong className="text-white">{paymentReference}</strong></p>
             <p className="mt-2 text-white/70">POP file: <strong className="text-white">{popName}</strong></p>
+            <p className="mt-2 text-white/70">Notes: <strong className="text-white">{notes}</strong></p>
             {popPreview ? (
               <a href={popPreview} target="_blank" rel="noreferrer" className="mt-4 inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/90">
                 Open POP

@@ -1,0 +1,21 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "build-lss",
+			"type": "shell",
+			"command": "npm run build",
+			"isBackground": false,
+			"problemMatcher": [
+				"$tsc"
+			]
+		},
+		{
+			"label": "dev-lss-clean",
+			"type": "shell",
+			"command": "if (Test-Path .next) { Remove-Item -Recurse -Force .next }; npm run dev",
+			"isBackground": true,
+			"problemMatcher": []
+		}
+	]
+}
